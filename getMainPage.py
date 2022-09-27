@@ -3,6 +3,7 @@ from selenium import webdriver
 from selenium.common.exceptions import NoSuchElementException
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.select import Select
+import re
 
 from selenium.webdriver.chrome.options import Options
 
@@ -39,31 +40,38 @@ if __name__ == '__main__':
     url = 'https://www.state.gov/public-schedule/'
     com.open_url(url)
     article_number = com.browser.find_element(By.CLASS_NAME, "collection-info__number")
-    print(article_number.text)
-    # com.browser.save_screenshot('save.png')
-    # select_element = com.browser.find_element(By.CSS_SELECTOR, '#pagination > div:nth-child(1) > select')
-    # select_object = Select(select_element)
-    # select_object.select_by_value('30')
-    try:
-        url_new = url + f'?results={article_number.text}&gotopage=&total_pages=1&coll_filter_year=' \
-                        f'&coll_filter_month=&coll_filter_speaker=' \
-                        f'&coll_filter_country=&coll_filter_release_type=&coll_filter_bureau=' \
-                        f'&coll_filter_program=&coll_filter_profession='
-        print(url_new)
-        com.open_url(url_new)
-        articles = com.browser.find_elements(By.CLASS_NAME, "collection-result__link")
-        file = open("urls.txt", "w+", encoding="utf8")
-        for article in articles:
-            url = article.get_attribute('href')
-            print(url)
-            file.write(url)
-            file.write("\n")
-        # btn = com.browser.find_element(By.CSS_SELECTOR,
-        #                                "#post-22944 > div > div.collection-list > div > div > a.next.page-numbers")
-        # btn.click()
-        file.close()
-    except NoSuchElementException:
-        print('没有找到按钮')
-
+    article_list_element = com.browser.find_element(By.CSS_SELECTOR, "#post-22944")
+    article_list_text = article_list_element.get_attribute("data-returned-posts")
+    article_list = article_list_text.replace('[', '').replace(']', '').split(',')
+    file = open("url_json.txt", "w+", encoding="utf8")
+    for article in article_list:
+        url_json = 'https://www.state.gov/wp-json/wp/v2/pages/' + article
+        file.write(url_json + '\n')
+    # print(article_number.text)
+    # # com.browser.save_screenshot('save.png')
+    # # select_element = com.browser.find_element(By.CSS_SELECTOR, '#pagination > div:nth-child(1) > select')
+    # # select_object = Select(select_element)
+    # # select_object.select_by_value('30')
+    # try:
+    #     url_new = url + f'?results={article_number.text}&gotopage=&total_pages=1&coll_filter_year=' \
+    #                     f'&coll_filter_month=&coll_filter_speaker=' \
+    #                     f'&coll_filter_country=&coll_filter_release_type=&coll_filter_bureau=' \
+    #                     f'&coll_filter_program=&coll_filter_profession='
+    #     print(url_new)
+    #     com.open_url(url_new)
+    #     articles = com.browser.find_elements(By.CLASS_NAME, "collection-result__link")
+    #     file = open("urls.txt", "w+", encoding="utf8")
+    #     for article in articles:
+    #         url = article.get_attribute('href')
+    #         print(url)
+    #         file.write(url)
+    #         file.write("\n")
+    #     # btn = com.browser.find_element(By.CSS_SELECTOR,
+    #     #                                "#post-22944 > div > div.collection-list > div > div > a.next.page-numbers")
+    #     # btn.click()
+    #     file.close()
+    # except NoSuchElementException:
+    #     print('没有找到按钮')
+    file.close()
     time.sleep(300)
     com.close_driver()
