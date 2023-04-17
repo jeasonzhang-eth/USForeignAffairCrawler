@@ -19,18 +19,8 @@ from src.common import remove_children, children, remove_element, html2element, 
 from src.element import Element
 from src.common import get_element_text_or_tail_or_attr
 from bs4 import BeautifulSoup
-
-CONTENT_EXTRACTOR_USELESS_TAGS = ['meta', 'style', 'script', 'link', 'video', 'audio', 'iframe', 'source', 'svg',
-                                  'path',
-                                  'symbol', 'img', 'footer', 'header']
-CONTENT_EXTRACTOR_STRIP_TAGS = ['span', 'blockquote', 'font', 'sup', 'b', 'u', 'i', 'strong', 'em', 'wbr', 'h2']
-CONTENT_EXTRACTOR_NOISE_XPATHS = [
-    '//div[contains(@class, "comment")]',
-    '//div[contains(@class, "advertisement")]',
-    '//div[contains(@class, "advert")]',
-    '//div[contains(@style, "display: none")]',
-]
-CONTENT_EXTRACTOR_USELESS_ATTR = ['font', 'class', 'style', 'size', 'face', 'color', 'align', 'lang']
+from src.common import CONTENT_EXTRACTOR_USELESS_TAGS, CONTENT_EXTRACTOR_STRIP_TAGS, CONTENT_EXTRACTOR_NOISE_XPATHS, \
+    CONTENT_EXTRACTOR_USELESS_ATTR
 
 
 def preprocess4content_extractor(element: Element):
@@ -193,7 +183,7 @@ if __name__ == '__main__':
         text_list = element_div.xpath('//text()')
         output_line_ = ';;;;'.join(text_list)
         output_line_ = date + '\t' + output_line_ + '\n'
-        output_line_ = output_line_.replace("b'", '').replace('b"', '')\
+        output_line_ = output_line_.replace("b'", '').replace('b"', '') \
             .replace(';;;; ;;;;', ';;;;').replace(';;;; ;;;;', ';;;;').replace(';;;; ;;;;', ';;;;')
 
         output_file.write(output_line_)

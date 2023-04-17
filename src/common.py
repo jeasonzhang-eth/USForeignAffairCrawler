@@ -22,7 +22,22 @@ from types import ModuleType
 from collections import defaultdict
 from loguru import logger
 from lxml.html import fromstring, HtmlElement
+
+from src.similarity import similarity
+
 # from src.similarity import similarity
+
+CONTENT_EXTRACTOR_USELESS_TAGS = ['meta', 'style', 'script', 'link', 'video', 'audio', 'iframe', 'source', 'svg',
+                                  'path',
+                                  'symbol', 'img', 'footer', 'header']
+CONTENT_EXTRACTOR_STRIP_TAGS = ['span', 'blockquote', 'font', 'sup', 'b', 'u', 'i', 'strong', 'em', 'wbr', 'h2']
+CONTENT_EXTRACTOR_NOISE_XPATHS = [
+    '//div[contains(@class, "comment")]',
+    '//div[contains(@class, "advertisement")]',
+    '//div[contains(@class, "advert")]',
+    '//div[contains(@style, "display: none")]',
+]
+CONTENT_EXTRACTOR_USELESS_ATTR = ['font', 'class', 'style', 'size', 'face', 'color', 'align', 'lang']
 
 
 def remove_element(element: Element):
@@ -371,18 +386,18 @@ def number_of_a_descendants(element: Element):
     return len(element.xpath('.//a'))
 
 
-def number_of_punctuation(element: Element):
-    """
-    get number of punctuation of text in this element
-    :param element:
-    :return:
-    """
-    if element is None:
-        return 0
-    text = ''.join(element.xpath('.//text()'))
-    text = re.sub(r'\s*', '', text, flags=re.S)
-    punctuations = [c for c in text if c in PUNCTUATION]
-    return len(punctuations)
+# def number_of_punctuation(element: Element):
+#     """
+#     get number of punctuation of text in this element
+#     :param element:
+#     :return:
+#     """
+#     if element is None:
+#         return 0
+#     text = ''.join(element.xpath('.//text()'))
+#     text = re.sub(r'\s*', '', text, flags=re.S)
+#     punctuations = [c for c in text if c in PUNCTUATION]
+#     return len(punctuations)
 
 
 def number_of_descendants(element: Element):
@@ -601,7 +616,7 @@ class BrowserHelper(object):
     def find_element(self, locator, timeout=10):
         u"""定位元素，参数locator为原则"""
         try:
-            element = WebDriverWait(self.driver, timeout, 1).until(ec.presence_of_element_located(locator))
+            element = WebDriverWait(self.driver, timeout=10.0).until(ec.presence_of_element_located(locator))
             return element
         except NoSuchElementException:
             print("%s 页面未找到元素 %s" % (self, locator))
@@ -687,21 +702,21 @@ class BrowserHelper(object):
             self.element_wait(by, value)
 
         if by == "id":
-            element = self.driver.find_elements(By.ID, value)
+            elements = self.driver.find_elements(By.ID, value)
         elif by == "name":
-            element = self.driver.find_elements(By.NAME, value)
+            elements = self.driver.find_elements(By.NAME, value)
         elif by == "class":
-            element = self.driver.find_elements(By.CLASS_NAME, value)
+            elements = self.driver.find_elements(By.CLASS_NAME, value)
         elif by == "link_text":
-            element = self.driver.find_elements(By.LINK_TEXT, value)
+            elements = self.driver.find_elements(By.LINK_TEXT, value)
         elif by == "xpath":
-            element = self.driver.find_elements(By.XPATH, value)  # 如果是xpath要以此格式传入xpath=>//*[@id='su']
+            elements = self.driver.find_elements(By.XPATH, value)  # 如果是xpath要以此格式传入xpath=>//*[@id='su']
         elif by == "css":
-            element = self.driver.find_elements(By.CSS_SELECTOR, value)
+            elements = self.driver.find_elements(By.CSS_SELECTOR, value)
         else:
             raise NameError(
                 "Please enter the correct targeting elements,'id','name','class','link_text','xpath','css'.")
-        return element
+        return elements
 
     def click(self, locator):
         u"""封装点击操作"""
@@ -885,34 +900,34 @@ class BrowserHelper(object):
             if handle != original_window:
                 self.driver.switch_to.window(handle)
 
-    def get_verify_code(self, locator):
-        u"""获取图片验证码"""
-        # 验证码图片保存地址
-        screenImg = "D:/image/verifyCode.png"
-        # 浏览器页面截图
-        self.driver.get_screenshot_as_file(screenImg)
-
-        # 定位验证码大小
-        location = self.find_element(locator).location
-        size = self.find_element(locator).size
-
-        left = location['x']
-        top = location['y']
-        right = location['x'] + size['width']
-        bottom = location['y'] + size['height']
-
-        # 从文件读取截图，截取验证码位置再次保存
-        img = Image.open(screenImg).crop((left, top, right, bottom))
-        img.convert('L')  # 转换模式：L|RGB
-        img = ImageEnhance.Contrast(img)  # 增加对比度
-        img = img.enhance(2.0)  # 增加饱和度
-        img.save(screenImg)
-
-        # 再次读取验证码
-        img = Image.open(screenImg)
-        time.sleep(1)
-        code = pytesseract.image_to_string(img)
-        return code
+    # def get_verify_code(self, locator):
+    #     u"""获取图片验证码"""
+    #     # 验证码图片保存地址
+    #     screenImg = "D:/image/verifyCode.png"
+    #     # 浏览器页面截图
+    #     self.driver.get_screenshot_as_file(screenImg)
+    #
+    #     # 定位验证码大小
+    #     location = self.find_element(locator).location
+    #     size = self.find_element(locator).size
+    #
+    #     left = location['x']
+    #     top = location['y']
+    #     right = location['x'] + size['width']
+    #     bottom = location['y'] + size['height']
+    #
+    #     # 从文件读取截图，截取验证码位置再次保存
+    #     img = Image.open(screenImg).crop((left, top, right, bottom))
+    #     img.convert('L')  # 转换模式：L|RGB
+    #     img = ImageEnhance.Contrast(img)  # 增加对比度
+    #     img = img.enhance(2.0)  # 增加饱和度
+    #     img.save(screenImg)
+    #
+    #     # 再次读取验证码
+    #     img = Image.open(screenImg)
+    #     time.sleep(1)
+    #     code = pytesseract.image_to_string(img)
+    #     return code
 
     def open_tab(self):
         u"""打开新选项卡并切换到新选项卡"""

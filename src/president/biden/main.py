@@ -47,31 +47,30 @@ def get_content_from_json():
         print(json_url)
         json_url = json_url.replace('\n', '')
 
-        # cookies = browser.browser.get_cookies()
-        # print(cookies)
         # proxies = {
         #     "http": "http://127.0.0.1:7890",
         #     "https": "http://127.0.0.1:7890",
         # }
         headers = {
-            "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9",
-            "Accept-Encoding": "gzip, deflate, br",
-            "Accept-Language": "zh-CN,zh;q=0.9,zh-HK;q=0.8,zh-TW;q=0.7",
-            "Sec-Ch-Ua": "\"Google Chrome\";v=\"105\", \"Not)A;Brand\";v=\"8\", \"Chromium\";v=\"105\"",
-            "Sec-Ch-Ua-Mobile": "?0",
-            "Sec-Ch-Ua-Platform": "\"Windows\"",
-            "Sec-Fetch-Dest": "document",
-            "Sec-Fetch-Mode": "navigate",
-            "Sec-Fetch-Site": "cross-site",
-            "Sec-Fetch-User": "?1",
-            "Upgrade-Insecure-Requests": "1",
-            "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) "
-                          "Chrome/105.0.0.0 Safari/537.36",
+            'authority': 'www.state.gov',
+            'accept': 'application/json, text/javascript, */*; q=0.01',
+            'accept-language': 'zh-CN,zh;q=0.9,zh-HK;q=0.8,zh-TW;q=0.7',
+            # 'cookie': 'ForeseeLoyalty_MID_IJ80MItY0t=2',
+            'referer': 'https://www.state.gov/public-schedule-march-23-2023/',
+            'sec-ch-ua': '"Chromium";v="112", "Google Chrome";v="112", "Not:A-Brand";v="99"',
+            'sec-ch-ua-mobile': '?0',
+            'sec-ch-ua-platform': '"Windows"',
+            'sec-fetch-dest': 'empty',
+            'sec-fetch-mode': 'cors',
+            'sec-fetch-site': 'same-origin',
+            'user-agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/112.0.0.0 Safari/537.36',
+            'x-requested-with': 'XMLHttpRequest',
         }
-        response = requests.get(json_url)  # , headers=headers, proxies=proxies, verify=False)
+
+        response = requests.get(json_url, headers=headers,  verify=False)
         print(response.status_code)
         # if response.status_code == 400:
-        url2 = response.links.get('alternate')['json_url']
+        url2 = response.links.get('alternate')['url']
         print(url2)
         response1 = requests.get(json_url, headers=headers)  # , proxies=proxies, verify=False)
         # if response1.status_code == 200:
@@ -95,15 +94,15 @@ def get_content_from_json():
         # print(paragraphs)
         # for p in paragraphs:
         #     print(p)
-        file_json_content.close()
+    file_json_content.close()
 
 
 # 判断文件是否自身执行，如果是则，执行之后的语句
 if __name__ == '__main__':
     bh = BrowserHelper()
-    base_url = 'https://www.state.gov/public-schedule/'
-    bh.open(base_url)
-    get_article_url(base_url)
-    get_article_json_url()
+    # base_url = 'https://www.state.gov/public-schedule/'
+    # bh.open(base_url)
+    # get_article_url(base_url)
+    # get_article_json_url()
     get_content_from_json()
     bh.close()

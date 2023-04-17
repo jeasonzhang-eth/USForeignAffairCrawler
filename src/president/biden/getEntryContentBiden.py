@@ -1,9 +1,9 @@
-from src.president.biden.main import Common
+from src.common import Browser
 from selenium.webdriver.common.by import By
 
 
 if __name__ == '__main__':
-    com = Common()
+    com = Browser()
     output_file_html = open('../../../result/biden/Biden_html.txt', 'w+', encoding="utf8")
     for line in open('../../../result/biden/biden_link.txt', 'r', encoding="utf8"):
         date = line.split('\t')[0].replace('Public Schedule – ', '').replace('Public Schedule: ', '')
