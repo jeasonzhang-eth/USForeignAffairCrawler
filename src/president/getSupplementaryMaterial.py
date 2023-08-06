@@ -10,7 +10,7 @@
 """
 
 import pandas as pd
-from src.common import BrowserHelper
+from src.common import Browser
 from selenium.webdriver.common.by import By
 from selenium.common.exceptions import TimeoutException
 from src.common import remove_children, children, remove_element, html2element, siblings, descendants
@@ -128,7 +128,7 @@ def get_link_content(link_, browser_, president_):
 
 def get_supplementary_material(president_):
     content_list = []
-    browser = BrowserHelper()
+    browser = Browser()
 
     dataframe = pd.read_csv(f'../../../result/{president_}/{president_}_test.csv')
     link_series = dataframe['Links']

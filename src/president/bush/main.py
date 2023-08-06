@@ -66,7 +66,7 @@ def get_day_link_text(_output_file_name, _month_link_list):
 
 
 if __name__ == '__main__':
-    # bh = BrowserHelper()
+    # browser = Browser()
     # output_file_name_bush_link = 'bush_day_link.txt'
     # month_link_list = get_month_link_list()
     # get_day_link_text(output_file_name_bush_link, month_link_list)
@@ -76,13 +76,13 @@ if __name__ == '__main__':
     # for line in open(output_file_name_bush_link, 'r'):
     #     year = line.split('\t')[0]
     #     link = line.split('\t')[1]
-    #     bh.open(link)
-    #     day_content_element = bh.find_element((By.XPATH, '/html/body/table[2]/tbody/tr/td'))
+    #     browser.open(link)
+    #     day_content_element = browser.find_element((By.XPATH, '/html/body/table[2]/tbody/tr/td'))
     #     origin_html = day_content_element.text.replace('\n', ';;;;')
     #     print(origin_html)
     #     output_bush_html.write(year + '\t' + origin_html + '\n')
     # output_bush_html.close()
-    # bh.close()
+    # browser.close()
 
     new_html_file = open('bush_html_new.txt', 'w+', encoding='utf8')
     for line in open('bush_html.txt', encoding='utf8'):

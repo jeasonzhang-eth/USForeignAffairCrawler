@@ -526,33 +526,33 @@ def similarity_with_siblings(element: Element):
     return np.mean(scores)
 
 
-class Browser(object):
-    # 初始化
-    def __init__(self):
-        # chrome_options = Options()
-        # chrome_options.add_argument('--headless')
-        # chrome_options.add_argument('--disable-gpu')  # 上面三行代码就是为了将Chrome不弹出界面，实现无界面爬取
-        # 创建浏览器
-        self.browser = webdriver.Chrome()
-        # self.browser = webdriver.Chrome(chrome_options=chrome_options)
-        # 浏览器最大化
-        self.browser.maximize_window()
-
-    def get_browser(self):
-        return self.browser
-
-    # 访问指定url
-    def open_url(self, purl):
-        self.browser.get(purl)
-        self.browser.implicitly_wait(10)
-
-    def close_driver(self):
-        self.browser.quit()
-
-    # 结束的时候清理了
-    def __del__(self):
-        time.sleep(3)
-        self.browser.quit()
+# class Browser(object):
+#     # 初始化
+#     def __init__(self):
+#         # chrome_options = Options()
+#         # chrome_options.add_argument('--headless')
+#         # chrome_options.add_argument('--disable-gpu')  # 上面三行代码就是为了将Chrome不弹出界面，实现无界面爬取
+#         # 创建浏览器
+#         self.browser = webdriver.Chrome()
+#         # self.browser = webdriver.Chrome(chrome_options=chrome_options)
+#         # 浏览器最大化
+#         self.browser.maximize_window()
+#
+#     def get_browser(self):
+#         return self.browser
+#
+#     # 访问指定url
+#     def open_url(self, purl):
+#         self.browser.get(purl)
+#         self.browser.implicitly_wait(10)
+#
+#     def close_driver(self):
+#         self.browser.quit()
+#
+#     # 结束的时候清理了
+#     def __del__(self):
+#         time.sleep(3)
+#         self.browser.quit()
 
 
 def get_element_text_or_tail_or_attr(_element, _type):
@@ -567,7 +567,7 @@ def get_element_text_or_tail_or_attr(_element, _type):
         return _href
 
 
-class BrowserHelper(object):
+class Browser(object):
     """
     selenium框架的主要类
     """
@@ -577,14 +577,17 @@ class BrowserHelper(object):
         """
         运行初始化方法默认chrome，当然，你也可以传入一个其他浏览器名称，
         """
+        # 浏览器最大化
         if browser == "firefox" or browser == "ff":
             self.driver = webdriver.Firefox()
         elif browser == "chrome":
             options = Options()
             options.add_argument("--disable-blink-features=AutomationControlled")
+            options.add_argument("--user-data-dir="+r"C:\Users\jie\AppData\Local\Google\Chrome\User Data\Default")
             options.add_experimental_option("excludeSwitches", ["enable-automation"])
             options.add_experimental_option('useAutomationExtension', False)
             self.driver = webdriver.Chrome(options=options)
+            self.driver.maximize_window()
         elif browser == "internet explorer" or browser == "ie":
             self.driver = webdriver.Ie()
         elif browser == "opera":
@@ -601,6 +604,7 @@ class BrowserHelper(object):
         else:
             raise NameError(
                 "找不到 %s 浏览器,你应该从这里面选取一个 'ie', 'ff', 'opera', 'edge', 'chrome' or 'chrome_headless'." % browser)
+        self.driver.maximize_window()
 
     def open(self, url, title='', timeout=10):
         u"""打开浏览器，并最大化，判断title是否为预期"""
@@ -621,7 +625,7 @@ class BrowserHelper(object):
         except NoSuchElementException:
             print("%s 页面未找到元素 %s" % (self, locator))
 
-    def find_elements(self, locator, timeout=10):
+    def find_elements(self, locator, timeout=60):
         u"""定位一组元素"""
         elements = WebDriverWait(self.driver, timeout, 1).until(ec.presence_of_all_elements_located(locator))
         return elements
@@ -943,6 +947,6 @@ class BrowserHelper(object):
 
 
 if __name__ == '__main__':
-    driver = BrowserHelper("chrome")
+    driver = Browser("chrome")
     # 检查是否处理反爬
     driver.open("https://bot.sannysoft.com/")

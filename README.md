@@ -1,48 +1,7 @@
 # 美国外交数据库项目
 ## 1. 文件夹说明
 ```shell
-├── README.md
-├── __pycache__
-│   └── common.cpython-310.pyc
-├── common.py
-├── main.py
-├── result
-│   ├── biden
-│   │   ├── Biden_html.txt
-│   │   ├── biden_link.txt
-│   │   ├── biden_output.txt
-│   │   ├── biden_output_html.txt
-│   │   ├── json_content.txt
-│   │   ├── content.xlsx
-│   │   └── url_json.txt
-│   └── trump
-│       ├── para.txt
-│       ├── trump_link.txt
-│       ├── trump_output.txt
-│       ├── trump_output_html.txt
-│       ├── trump_output_html1.txt
-│       └── trump_output_html3.txt
-└── src
-    ├── __init__.py
-    └── president
-        ├── __init__.py
-        ├── biden
-        │   ├── Biden_HTML.py
-        │   ├── __init__.py
-        │   ├── getEntryContentBiden.py
-        │   ├── main.py
-        │   └── getSubPage.py
-        ├── bush
-        │   └── __init__.py
-        ├── clinton
-        │   └── __init__.py
-        ├── obama
-        │   └── __init__.py
-        └── trump
-            ├── __init__.py
-            ├── getEntryContent.py
-            ├── getTrumpScheduleLink.py
-            └── trump_HTML.py
+
 ```
 所有代码都放在src目录下
 所有结果都保存在
@@ -54,3 +13,14 @@
     cp output1.txt output1.txt.bak
     2.py -i output1.txt.bak -o output2.txt
 ```
+
+## 3. 最终输出文件定义
+
+| 列名            | 含义                   |
+| --------------- | ---------------------- |
+| Date            | 日期                   |
+| President       | 总统名称               |
+| article_link    | 该日期下发布的文章链接 |
+| article_html    | 该日期下发布的文章的   |
+| article_content | 该日期下发布的文章内容 |
+

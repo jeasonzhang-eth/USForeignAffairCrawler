@@ -1,6 +1,6 @@
 from selenium.common.exceptions import NoSuchElementException
 from selenium.webdriver.common.by import By
-from src.common import BrowserHelper
+from src.common import Browser
 import json
 import requests
 import jsonpath
@@ -9,7 +9,7 @@ import jsonpath
 def get_article_url(baseurl_):
     # 获取正文url
     locator = (By.CLASS_NAME, "collection-info__number")
-    article_number = bh.find_element(locator).text
+    article_number = browser.find_element(locator).text
     print(article_number)
     file_url = open("../../../result/biden/biden_link.txt", "w+", encoding="utf8")
     try:
@@ -18,8 +18,8 @@ def get_article_url(baseurl_):
                         f'&coll_filter_country=&coll_filter_release_type=&coll_filter_bureau=' \
                         f'&coll_filter_program=&coll_filter_profession='
         print(url_new)
-        bh.open(url_new)
-        article_link_elements = bh.find_elements((By.CLASS_NAME, "collection-result__link"))
+        browser.open(url_new)
+        article_link_elements = browser.find_elements((By.CLASS_NAME, "collection-result__link"))
         for article_link in article_link_elements:
             line_ = article_link.text + '\t' + article_link.get_attribute("href") + '\n'
             print(line_)
@@ -32,7 +32,7 @@ def get_article_url(baseurl_):
 def get_article_json_url():
     # 获取json数据
     file_json = open("../../../result/biden/url_json.txt", "w+", encoding="utf8")
-    article_list_element = bh.find_element((By.CSS_SELECTOR, "#post-22944"))
+    article_list_element = browser.find_element((By.CSS_SELECTOR, "#post-22944"))
     article_list_text = article_list_element.get_attribute("data-returned-posts")
     article_id_list = article_list_text.replace('[', '').replace(']', '').split(',')
     for article_id in article_id_list:
@@ -99,10 +99,10 @@ def get_content_from_json():
 
 # 判断文件是否自身执行，如果是则，执行之后的语句
 if __name__ == '__main__':
-    bh = BrowserHelper()
-    # base_url = 'https://www.state.gov/public-schedule/'
-    # bh.open(base_url)
-    # get_article_url(base_url)
+    browser = Browser()
+    base_url = 'https://www.state.gov/public-schedule/'
+    browser.open(base_url)
+    get_article_url(base_url)
     # get_article_json_url()
     get_content_from_json()
-    bh.close()
+    browser.close()

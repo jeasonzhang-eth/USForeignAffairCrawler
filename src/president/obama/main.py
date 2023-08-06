@@ -15,7 +15,7 @@ from html import unescape
 from lxml import etree
 from lxml.html import fromstring
 from lxml.html import HtmlElement
-from src.common import remove_children, children, remove_element, html2element, siblings, descendants
+from src.common import remove_children, children, remove_element, html2element, siblings, descendants, Browser
 from src.element import Element
 from src.common import get_element_text_or_tail_or_attr
 from bs4 import BeautifulSoup
@@ -115,23 +115,23 @@ def get_obama_day_url(filename):
 
 
 if __name__ == '__main__':
-    # bh = BrowserHelper()
-    # output_obama_day_link_filename = 'obama_link.txt'
-    # # get_obama_day_url(output_obama_day_link_filename)
-    # output_obama_html_filename = 'obama_html.txt'
-    # output_bush_html = open(output_obama_html_filename, 'w+', encoding='utf8')
-    # for line in open(output_obama_day_link_filename, 'r'):
-    #     date = line.split('\t')[0]
-    #     link = line.split('\t')[1]
-    #     bh.open(link)
-    #     day_content_element = bh.find_element((By.XPATH, '//*[@id="centerblock"]'))
-    #     # origin_html = day_content_element.text.replace('\n', ';;;;')
-    #     html = day_content_element.get_attribute("innerHTML")
-    #     html = html.replace('\t', '').replace('\n', '').replace('&nbsp;', '').replace('<p></p>', '')
-    #     line = date + '\t' + html + '\n'
-    #     output_bush_html.write(line)
-    # output_bush_html.close()
-    # bh.close()
+    bh = Browser()
+    output_obama_day_link_filename = 'obama_link.txt'
+    # get_obama_day_url(output_obama_day_link_filename)
+    output_obama_html_filename = 'obama_html.txt'
+    output_bush_html = open(output_obama_html_filename, 'w+', encoding='utf8')
+    for line in open(output_obama_day_link_filename, 'r'):
+        date = line.split('\t')[0]
+        link = line.split('\t')[1]
+        bh.open(link)
+        day_content_element = bh.find_element((By.XPATH, '//*[@id="centerblock"]'))
+        # origin_html = day_content_element.text.replace('\n', ';;;;')
+        html = day_content_element.get_attribute("innerHTML")
+        html = html.replace('\t', '').replace('\n', '').replace('&nbsp;', '').replace('<p></p>', '')
+        line = date + '\t' + html + '\n'
+        output_bush_html.write(line)
+    output_bush_html.close()
+    bh.close()
 
     # output_file_html = open('obama_html_preprocess.txt', 'w+', encoding='utf8')
     # tag_set = set()
