@@ -16,8 +16,8 @@ from classes.factory.america import AmericaFactory
 
 def main():
     operation_biden = AmericaFactory().product_operation('biden')
-    operation_biden.run()
-    operation_biden.browser.quit()
+    with operation_biden.browser as browser:
+        operation_biden.run(browser)
 
 
 if __name__ == '__main__':

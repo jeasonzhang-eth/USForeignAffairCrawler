@@ -8,6 +8,7 @@
 ------------      -------    --------    -----------
 2023/8/7 15:51   JeasonZhang      1.0         None
 """
+from typing import Union
 from urllib.parse import urlparse
 
 from selenium import webdriver
@@ -18,6 +19,7 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.support import expected_conditions as ec
 from selenium.webdriver.support.select import Select
 from selenium.webdriver.support.wait import WebDriverWait
+from selenium.webdriver.remote.webelement import WebElement
 
 
 class Browser(object):
@@ -40,7 +42,6 @@ class Browser(object):
             options.add_experimental_option("excludeSwitches", ["enable-automation"])
             options.add_experimental_option('useAutomationExtension', False)
             self.driver = webdriver.Chrome(options=options)
-            self.driver.maximize_window()
         elif browser == "internet explorer" or browser == "ie":
             self.driver = webdriver.Ie()
         elif browser == "opera":
@@ -59,6 +60,14 @@ class Browser(object):
                 "找不到 %s 浏览器,你应该从这里面选取一个 'ie', 'ff', 'opera', 'edge', 'chrome' or 'chrome_headless'." % browser)
         self.driver.maximize_window()
 
+    def __enter__(self):
+        return self
+
+    # type、value和traceback将分别表示异常的类型、异常对象和异常堆栈信息，传递出上下文显示,如果没有异常，则三个变量的值均为 None。
+    def __exit__(self, exc_type, exc_value,exc_traceback):
+        if self.driver:
+            self.driver.quit()
+
     def open(self, url, title='', timeout=10):
         u"""打开浏览器，并最大化，判断title是否为预期"""
         self.driver.get(url)
@@ -70,17 +79,18 @@ class Browser(object):
         except Exception as msg:
             print("Error:%s" % msg)
 
-    def find_element(self, locator, timeout=10):
+    def find_element(self, locator, timeout=60) -> WebElement:
         u"""定位元素，参数locator为原则"""
+        self.driver.find_elements()
         try:
-            element = WebDriverWait(self.driver, timeout=10.0).until(ec.presence_of_element_located(locator))
+            element: WebElement = WebDriverWait(self.driver, timeout).until(ec.presence_of_element_located(locator))
             return element
         except NoSuchElementException:
             print("%s 页面未找到元素 %s" % (self, locator))
 
-    def find_elements(self, locator, timeout=60):
+    def find_elements(self, locator, timeout=60) -> list[Union[None, WebElement]]:
         u"""定位一组元素"""
-        elements = WebDriverWait(self.driver, timeout, 1).until(ec.presence_of_all_elements_located(locator))
+        elements: list[Union[None, WebElement]] = WebDriverWait(self.driver, timeout, 1).until(ec.presence_of_all_elements_located(locator))
         return elements
 
     def element_wait(self, by, value, secs=5):

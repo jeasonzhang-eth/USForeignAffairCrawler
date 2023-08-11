@@ -1,7 +1,7 @@
 from html import unescape
 from lxml import etree
 from lxml.html import fromstring
-from utils.element import get_element_text_or_tail_or_attr
+from utils.element_operation import get_element_text_or_tail_or_attr
 
 if __name__ == '__main__':
     output_file = open('../../../result/trump/trump_output.txt', 'w+', encoding="utf8")

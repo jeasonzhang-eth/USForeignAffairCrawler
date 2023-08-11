@@ -12,16 +12,16 @@ from classes.operation.base import Operation
 
 
 class OperationBush(Operation):
-    def get_article_urls(self):
+    def get_article_urls(self, browser):
         pass
 
-    def get_article_html(self):
+    def get_article_html(self, browser):
         pass
 
     def extract_article_content(self):
         pass
 
-    def run(self):
+    def run(self, browser):
         pass
 
     def __init__(self):

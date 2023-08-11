@@ -10,7 +10,7 @@
 """
 from dataclasses import dataclass
 from pandas_dataclasses import AsFrame, Index, Data
-
+from typing import Annotated as Ann
 # Record = make_dataclass("Record", [
 #     ("date", date),
 #     ("president", str),
@@ -22,13 +22,14 @@ from pandas_dataclasses import AsFrame, Index, Data
 
 @dataclass
 class Record(AsFrame):
-    index: Index[int]
-    date_: Data[str]
-    president: Data[str]
-    article_link: Data[str]
-    article_html: Data[str]
-    article_content: Data[str]
-    president_spec_content: Data[str]
+    index: Ann[Index[int], 'index'] = 0
+    date_: Ann[Data[str], 'date'] = ''
+    president: Data[str] = ''
+    article_link: Data[str] = ''
+    article_short_link: Data[str] = ''
+    article_html: Data[str] = ''
+    article_content: Data[str] = ''
+    president_spec_content: Data[str] = ''
 
     # @property
     # def president_spec_content(self):

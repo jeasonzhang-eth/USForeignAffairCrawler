@@ -2,7 +2,10 @@ from lxml.html import HtmlElement, etree
 from numpy import mean
 
 
-class Element(HtmlElement):
+class ArticleElement(HtmlElement):
+    """
+        该类对lxml库中的HtmlElement进行封装，自动获取一篇文章中的关键内容，比如文本，标题，并且对文章进行统计，比如统计单词，标点符号，子节点数量
+    """
     _id: int = None
     _selector: str = None
     _parent_selector: str = None
@@ -62,7 +65,7 @@ class Element(HtmlElement):
         """
         if self._alias is not None:
             return self._alias
-        from utils.element import alias
+        from utils.element_operation import alias
         self._alias = alias(self)
         return self._alias
 
@@ -74,7 +77,7 @@ class Element(HtmlElement):
         """
         if self._selector is not None:
             return self._selector
-        from utils.element import selector
+        from utils.element_operation import selector
         self._selector = selector(self)
         return self._selector
 
@@ -86,7 +89,7 @@ class Element(HtmlElement):
         """
         if self._children is not None:
             return self._children
-        from utils.element import children
+        from utils.element_operation import children
         self._children = list(children(self))
         return self._children
 
@@ -98,7 +101,7 @@ class Element(HtmlElement):
         """
         if self._siblings is not None:
             return self._siblings
-        from utils.element import siblings
+        from utils.element_operation import siblings
         self._siblings = list(siblings(self))
         return self._siblings
 
@@ -110,7 +113,7 @@ class Element(HtmlElement):
         """
         if self._descendants is not None:
             return self._descendants
-        from utils.element import descendants
+        from utils.element_operation import descendants
         self._descendants = list(descendants(self))
         return self._descendants
 
@@ -122,7 +125,7 @@ class Element(HtmlElement):
         """
         if self._parent_selector is not None:
             return self._parent_selector
-        from utils.element import selector, parent
+        from utils.element_operation import selector, parent
         # TODO: change parent(self) to self.parent
         p = parent(self)
         if p is not None:
@@ -148,7 +151,7 @@ class Element(HtmlElement):
         """
         if self._text is not None:
             return self._text
-        from utils.element import text
+        from utils.element_operation import text
         self._text = text(self)
         return self._text
 
@@ -168,7 +171,7 @@ class Element(HtmlElement):
         """
         if self._path is not None:
             return self._path
-        from utils.element import path
+        from utils.element_operation import path
         self._path = path(self)
         return self._path
 
@@ -180,7 +183,7 @@ class Element(HtmlElement):
         """
         if self._path_raw is not None:
             return self._path_raw
-        from utils.element import path_raw
+        from utils.element_operation import path_raw
         self._path_raw = path_raw(self)
         return self._path_raw
 
@@ -192,7 +195,7 @@ class Element(HtmlElement):
         """
         if self._number_of_char is not None:
             return self._number_of_char
-        from utils.element import number_of_char
+        from utils.element_operation import number_of_char
         self._number_of_char = number_of_char(self)
         return self._number_of_char
 
@@ -204,7 +207,7 @@ class Element(HtmlElement):
         """
         if self._number_of_a_descendants is not None:
             return self._number_of_a_descendants
-        from utils.element import number_of_a_descendants
+        from utils.element_operation import number_of_a_descendants
         self._number_of_a_descendants = number_of_a_descendants(self)
         return self._number_of_a_descendants
 
@@ -216,7 +219,7 @@ class Element(HtmlElement):
         """
         if self._number_of_a_char is not None:
             return self._number_of_a_char
-        from utils.element import number_of_a_char
+        from utils.element_operation import number_of_a_char
         self._number_of_a_char = number_of_a_char(self)
         return self._number_of_a_char
 
@@ -228,7 +231,7 @@ class Element(HtmlElement):
         """
         if self._number_of_p_descendants is not None:
             return self._number_of_p_descendants
-        from utils.element import number_of_p_descendants
+        from utils.element_operation import number_of_p_descendants
         self._number_of_p_descendants = number_of_p_descendants(self)
         return self._number_of_p_descendants
 
@@ -240,7 +243,7 @@ class Element(HtmlElement):
         """
         if self._number_of_punctuation is not None:
             return self._number_of_punctuation
-        from utils.element import number_of_punctuation
+        from utils.element_operation import number_of_punctuation
         self._number_of_punctuation = number_of_punctuation(self)
         return self._number_of_punctuation
 
@@ -285,7 +288,7 @@ class Element(HtmlElement):
         """
         if self._density_of_punctuation is not None:
             return self._density_of_punctuation
-        from utils.element import density_of_punctuation
+        from utils.element_operation import density_of_punctuation
         self._density_of_punctuation = density_of_punctuation(self)
         return self._density_of_punctuation
 
@@ -297,7 +300,7 @@ class Element(HtmlElement):
         """
         if self._density_of_text is not None:
             return self._density_of_text
-        from utils.element import density_of_text
+        from utils.element_operation import density_of_text
         self._density_of_text = density_of_text(self)
         return self._density_of_text
 
@@ -309,7 +312,7 @@ class Element(HtmlElement):
         """
         if self._similarity_with_siblings is not None:
             return self._similarity_with_siblings
-        from utils.element import similarity_with_siblings
+        from utils.element_operation import similarity_with_siblings
         self._similarity_with_siblings = similarity_with_siblings(self)
         return self._similarity_with_siblings
 
@@ -321,7 +324,7 @@ class Element(HtmlElement):
         """
         if self._a_descendants is not None:
             return self._a_descendants
-        from utils.element import a_descendants
+        from utils.element_operation import a_descendants
         self._a_descendants = a_descendants(self)
         return self._a_descendants
 
@@ -333,7 +336,7 @@ class Element(HtmlElement):
         """
         if self._a_descendants_group is not None:
             return self._a_descendants_group
-        from utils.element import a_descendants_group
+        from utils.element_operation import a_descendants_group
         self._a_descendants_group = a_descendants_group(self)
         return self._a_descendants_group
 
@@ -346,7 +349,7 @@ class Element(HtmlElement):
         if self._a_descendants_group_text_length is not None:
             return self._a_descendants_group_text_length
         result = {}
-        from utils.element import text
+        from utils.element_operation import text
         for path, elements in self.a_descendants_group.items():
             lengths = []
             for element in elements:

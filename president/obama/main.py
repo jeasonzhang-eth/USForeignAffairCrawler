@@ -15,49 +15,9 @@ from html import unescape
 from bs4 import BeautifulSoup
 from selenium.webdriver.common.by import By
 from lxml import etree
-from utils.element import remove_children, children, remove_element, html2element
+from utils.element_operation import html2element, preprocess4content_extractor, process4content_extractor
 from classes.browser import Browser
-from classes.element import Element
-from utils.element import get_element_text_or_tail_or_attr
-from utils.element import CONTENT_EXTRACTOR_USELESS_TAGS, CONTENT_EXTRACTOR_STRIP_TAGS, CONTENT_EXTRACTOR_NOISE_XPATHS, \
-    CONTENT_EXTRACTOR_USELESS_ATTR
-
-
-def preprocess4content_extractor(element: Element):
-    """
-    preprocess element for content extraction
-    :param element:
-    :return:
-    """
-    # 将该标签内所有内容全部移除，包括子元素
-    etree.strip_elements(element, *CONTENT_EXTRACTOR_USELESS_TAGS)
-    # 只移除该标签，但是保留该标签下面的子标签
-    etree.strip_tags(element, *CONTENT_EXTRACTOR_STRIP_TAGS)
-
-    remove_children(element, CONTENT_EXTRACTOR_NOISE_XPATHS)
-
-    etree.strip_attributes(element, *CONTENT_EXTRACTOR_USELESS_ATTR)
-
-
-def process4content_extractor(tag_set, date_set, element: Element, date_):
-    # print(len(list(children(element))))
-    for child in children(element):
-        # 把div节点转换成p节点
-        if child.tag.lower() == 'div':
-            child.tag = 'p'
-        if child.tag != 'p':  # 不是p标签
-            tag_set.add(child.tag)
-            date_set.add(date_)
-            # print(date_ + '\t' + child.tag)
-            # print(len(list(children(child))))
-    p_tag_list = element.xpath('/html/div/p')
-    for p_tag in p_tag_list:
-        if (p_tag.text in ["b' ", ' ', '', "b'"]) and (p_tag.tail in [' ', '', '  ']):
-            remove_element(p_tag)
-        pp_tag_list = p_tag.xpath('//p')
-        if pp_tag_list:
-            if (p_tag.text in [' ', '']) and (p_tag.tail in [' ', '']):
-                remove_element(p_tag)
+from utils.element_operation import get_element_text_or_tail_or_attr
 
 
 def build_month_url_list():

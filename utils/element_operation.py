@@ -1,11 +1,13 @@
 # coding=utf-8
 """
-此文件中保存对网页元素（Element类）的主要操作
+此文件中保存对网页元素（Element类）的主要操作函数
 """
+from lxml import etree
+
 # from PIL import Image, ImageEnhance
 # import pytesseract
 from classes.browser import Browser
-from classes.element import Element
+from classes.article_element import ArticleElement
 import re
 import numpy as np
 from os.path import exists
@@ -30,7 +32,7 @@ CONTENT_EXTRACTOR_NOISE_XPATHS = [
 CONTENT_EXTRACTOR_USELESS_ATTR = ['font', 'class', 'style', 'size', 'face', 'color', 'align', 'lang']
 
 
-def remove_element(element: Element):
+def remove_element(element: ArticleElement):
     """
     remove child element from parent
     :param element:
@@ -43,7 +45,7 @@ def remove_element(element: Element):
         p.remove(element)
 
 
-def remove_children(element: Element, xpaths):
+def remove_children(element: ArticleElement, xpaths):
     """
     remove children from element
     :param element:
@@ -70,7 +72,7 @@ def html2element(html: str):
     if not html:
         return None
     element = fromstring(html)
-    element.__class__ = Element
+    element.__class__ = ArticleElement
     return element
 
 
@@ -86,7 +88,7 @@ def file2element(file_path):
         return html2element(f.read())
 
 
-def selector(element: Element):
+def selector(element: ArticleElement):
     """
     get id using recursive function.
     for example result: html/body/div/div/ul/li
@@ -101,7 +103,7 @@ def selector(element: Element):
     return element.alias
 
 
-def path_raw(element: Element):
+def path_raw(element: ArticleElement):
     """
     get tag path using recursive function, only contains raw tag
     for example result: html/body/div/div/ul/li
@@ -116,7 +118,7 @@ def path_raw(element: Element):
     return element.tag
 
 
-def path(element: Element):
+def path(element: ArticleElement):
     """
     get tag path using recursive function.
     for example result: html/body/div/div/ul/li
@@ -132,7 +134,7 @@ def path(element: Element):
     return result
 
 
-def a_descendants(element: Element):
+def a_descendants(element: ArticleElement):
     """
     get
     :param element:
@@ -142,12 +144,12 @@ def a_descendants(element: Element):
         return []
     descendants = []
     for descendant in element.xpath('.//a'):
-        descendant.__class__ = Element
+        descendant.__class__ = ArticleElement
         descendants.append(descendant)
     return descendants
 
 
-def a_descendants_group(element: Element):
+def a_descendants_group(element: ArticleElement):
     """
     get linked descendants group
     :param element:
@@ -160,7 +162,7 @@ def a_descendants_group(element: Element):
     return result
 
 
-def parent(element: Element):
+def parent(element: ArticleElement):
     """
     get parent of element
     :param element:
@@ -170,11 +172,11 @@ def parent(element: Element):
         return None
     parent = element.getparent()
     if isinstance(parent, ModuleType):
-        parent.__class__ = Element
+        parent.__class__ = ArticleElement
     return parent
 
 
-def children(element: Element, including=False):
+def children(element: ArticleElement, including=False):
     """
     get children
     :param element:
@@ -187,11 +189,11 @@ def children(element: Element, including=False):
         yield element
     for child in element.iterchildren():
         if isinstance(child, HtmlElement):
-            child.__class__ = Element
+            child.__class__ = ArticleElement
             yield child
 
 
-def siblings(element: Element, including=False):
+def siblings(element: ArticleElement, including=False):
     """
     get siblings of element
     :param element:
@@ -204,15 +206,15 @@ def siblings(element: Element, including=False):
         yield element
     for sibling in element.itersiblings(preceding=True):
         if isinstance(sibling, HtmlElement):
-            sibling.__class__ = Element
+            sibling.__class__ = ArticleElement
             yield sibling
     for sibling in element.itersiblings(preceding=False):
         if isinstance(sibling, HtmlElement):
-            sibling.__class__ = Element
+            sibling.__class__ = ArticleElement
             yield sibling
 
 
-def descendants(element: Element, including=False):
+def descendants(element: ArticleElement, including=False):
     """
     get descendants clement of specific element
     :param element: parent element
@@ -225,11 +227,11 @@ def descendants(element: Element, including=False):
         yield element
     for descendant in element.iterdescendants():
         if isinstance(descendant, HtmlElement):
-            descendant.__class__ = Element
+            descendant.__class__ = ArticleElement
             yield descendant
 
 
-def alias(element: Element):
+def alias(element: ArticleElement):
     """
     get alias of element, concat tag and attribs
     :param element:
@@ -252,7 +254,7 @@ def alias(element: Element):
     return result
 
 
-def children_of_head(element: Element):
+def children_of_head(element: ArticleElement):
     """
     get children element of body element
     :param element:
@@ -263,12 +265,12 @@ def children_of_head(element: Element):
     body_xpath = '//head'
     body_element = element.xpath(body_xpath)
     if body_element:
-        body_element.__class__ = Element
+        body_element.__class__ = ArticleElement
         return descendants(body_element, True)
     return []
 
 
-def descendants_of_body(element: Element):
+def descendants_of_body(element: ArticleElement):
     """
     get descendants element of body element
     :param element:
@@ -279,12 +281,12 @@ def descendants_of_body(element: Element):
     body_xpath = '//body'
     elements = element.xpath(body_xpath)
     if elements:
-        elements[0].__class__ = Element
+        elements[0].__class__ = ArticleElement
         return list(descendants(elements[0], True))
     return []
 
 
-def text(element: Element):
+def text(element: ArticleElement):
     """
     get text of element
     :param element:
@@ -297,7 +299,7 @@ def text(element: Element):
     return text
 
 
-def number_of_char(element: Element):
+def number_of_char(element: ArticleElement):
     """
     get number of char, for example, result of `<a href="#">hello</a>world` = 10
     :param element:
@@ -308,7 +310,7 @@ def number_of_char(element: Element):
     return len(text(element))
 
 
-def number_of_a_char(element: Element):
+def number_of_a_char(element: ArticleElement):
     """
     get number of linked char, for example, result of `<a href="#">hello</a>world` = 5
     :param element:
@@ -321,7 +323,7 @@ def number_of_a_char(element: Element):
     return len(text)
 
 
-def number_of_a_char_log10(element: Element):
+def number_of_a_char_log10(element: ArticleElement):
     """
     get number of linked char, to log10
     :param element:
@@ -332,7 +334,7 @@ def number_of_a_char_log10(element: Element):
     return np.log10(number_of_a_char(element) + 1)
 
 
-def number_of_p_children(element: Element):
+def number_of_p_children(element: ArticleElement):
     """
     get number of p tags in children
     :param element:
@@ -343,7 +345,7 @@ def number_of_p_children(element: Element):
     return len(element.xpath('./p'))
 
 
-def number_of_p_descendants(element: Element):
+def number_of_p_descendants(element: ArticleElement):
     """
     get number of p tags in descendants
     :param element:
@@ -354,7 +356,7 @@ def number_of_p_descendants(element: Element):
     return len(element.xpath('.//p'))
 
 
-def number_of_p_descendants_log10(element: Element):
+def number_of_p_descendants_log10(element: ArticleElement):
     """
     get number of p tags, to log10
     :param element:
@@ -365,7 +367,7 @@ def number_of_p_descendants_log10(element: Element):
     return np.log10(number_of_p_descendants(element))
 
 
-def number_of_a_descendants(element: Element):
+def number_of_a_descendants(element: ArticleElement):
     """
     get number of a tags in this element
     :param element:
@@ -376,7 +378,7 @@ def number_of_a_descendants(element: Element):
     return len(element.xpath('.//a'))
 
 
-def number_of_punctuation(element: Element):
+def number_of_punctuation(element: ArticleElement):
     """
     get number of punctuation of text in this element
     :param element:
@@ -391,7 +393,7 @@ def number_of_punctuation(element: Element):
     return len(punctuations)
 
 
-def number_of_descendants(element: Element):
+def number_of_descendants(element: ArticleElement):
     """
     get number of descendants
     :param element:
@@ -403,7 +405,7 @@ def number_of_descendants(element: Element):
     return len(list(descendants(element, including=False)))
 
 
-def number_of_siblings(element: Element):
+def number_of_siblings(element: ArticleElement):
     """
     get number of siblings
     :param element:
@@ -414,7 +416,7 @@ def number_of_siblings(element: Element):
     return len(list(siblings(element, including=False)))
 
 
-# def number_of_clusters(element: Element, tags=None):
+# def number_of_clusters(element: ArticleElement, tags=None):
 #     """
 #     get number of clusters
 #     :param element:
@@ -448,7 +450,7 @@ def number_of_siblings(element: Element):
 #     return len(descendants_tree)
 
 
-def number_of_children(element: Element):
+def number_of_children(element: ArticleElement):
     """
     get number of children
     :param element:
@@ -459,7 +461,7 @@ def number_of_children(element: Element):
     return len(list(children(element)))
 
 
-def density_of_text(element: Element):
+def density_of_text(element: ArticleElement):
     """
     get density of text, using:
                number_of_char - number_of_a_char
@@ -474,7 +476,7 @@ def density_of_text(element: Element):
            (element.number_of_descendants - element.number_of_a_descendants)
 
 
-def density_of_punctuation(element: Element):
+def density_of_punctuation(element: ArticleElement):
     """
     get density of punctuation, using
                 number_of_char - number_of_linked_char
@@ -489,7 +491,7 @@ def density_of_punctuation(element: Element):
     return result or 1
 
 
-def similarity_with_element(element1: Element, element2: Element):
+def similarity_with_element(element1: ArticleElement, element2: ArticleElement):
     """
     get similarity between two elements
     :param element1:
@@ -502,7 +504,7 @@ def similarity_with_element(element1: Element, element2: Element):
     return similarity(alias1, alias2)
 
 
-def similarity_with_siblings(element: Element):
+def similarity_with_siblings(element: ArticleElement):
     """
     get similarity with siblings
     :param element:
@@ -562,3 +564,40 @@ if __name__ == '__main__':
     driver = Browser("chrome")
     # 检查是否处理反爬
     driver.open("https://bot.sannysoft.com/")
+
+
+def preprocess4content_extractor(element: ArticleElement):
+    """
+    preprocess element for content extraction
+    :param element:
+    :return:
+    """
+    # 将该标签内所有内容全部移除，包括子元素
+    etree.strip_elements(element, *CONTENT_EXTRACTOR_USELESS_TAGS)
+    # 只移除该标签，但是保留该标签下面的子标签
+    etree.strip_tags(element, *CONTENT_EXTRACTOR_STRIP_TAGS)
+
+    remove_children(element, CONTENT_EXTRACTOR_NOISE_XPATHS)
+
+    etree.strip_attributes(element, *CONTENT_EXTRACTOR_USELESS_ATTR)
+
+
+def process4content_extractor(tag_set, date_set, element: ArticleElement, date_):
+    # print(len(list(children(element))))
+    for child in children(element):
+        # 把div节点转换成p节点
+        if child.tag.lower() == 'div':
+            child.tag = 'p'
+        if child.tag != 'p':  # 不是p标签
+            tag_set.add(child.tag)
+            date_set.add(date_)
+            # print(date_ + '\t' + child.tag)
+            # print(len(list(children(child))))
+    p_tag_list = element.xpath('/html/div/p')
+    for p_tag in p_tag_list:
+        if (p_tag.text in ["b' ", ' ', '', "b'"]) and (p_tag.tail in [' ', '', '  ']):
+            remove_element(p_tag)
+        pp_tag_list = p_tag.xpath('//p')
+        if pp_tag_list:
+            if (p_tag.text in [' ', '']) and (p_tag.tail in [' ', '']):
+                remove_element(p_tag)

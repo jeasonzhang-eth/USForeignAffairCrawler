@@ -13,10 +13,10 @@ import pandas as pd
 from src.classes.browser import Browser
 from selenium.webdriver.common.by import By
 from selenium.common.exceptions import TimeoutException
-from utils.element import html2element
+from utils.element_operation import html2element
 from lxml import etree
-from utils.element import get_element_text_or_tail_or_attr
-from utils.element import CONTENT_EXTRACTOR_USELESS_TAGS, CONTENT_EXTRACTOR_STRIP_TAGS
+from utils.element_operation import get_element_text_or_tail_or_attr
+from utils.element_operation import CONTENT_EXTRACTOR_USELESS_TAGS, CONTENT_EXTRACTOR_STRIP_TAGS
 
 import io
 import sys
