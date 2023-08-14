@@ -10,7 +10,7 @@
 """
 
 import pandas as pd
-from src.classes.browser import Browser
+from classes.browser import Browser
 from selenium.webdriver.common.by import By
 from selenium.common.exceptions import TimeoutException
 from utils.element_operation import html2element

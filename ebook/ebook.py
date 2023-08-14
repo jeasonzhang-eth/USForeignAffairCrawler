@@ -12,13 +12,14 @@ import time
 
 from selenium.common.exceptions import TimeoutException, ElementClickInterceptedException
 from selenium.webdriver.common.by import By
-from common import BrowserHelper, get_element_text_or_tail_or_attr
+from classes.browser import Browser
+from utils.element_operation import get_element_text_or_tail_or_attr
 from lxml.html import fromstring
 from lxml import etree
 
 
 def get_article_links():
-    browser = BrowserHelper()
+    browser = Browser()
     href_list = []
     for i in range(1, 10):
         browser.open(f'https://www.tianlangbooks.com/articles/page/{i}')
@@ -33,7 +34,7 @@ def get_article_links():
 
 
 def get_lanzou_link_and_passwd():
-    browser = BrowserHelper()
+    browser = Browser()
     with open('pan_link_part4.txt', 'w+', encoding='utf8') as f:
         for line in open("article_links_part4.txt", 'r+', encoding='utf8'):
             try:

@@ -33,7 +33,7 @@ class OperationBiden(Operation):
             record.index = index
             record.article_short_link = f'https://www.state.gov/?p={article_id}'  # 这里是文章的短链接，可能失效
             record.president_spec_content = str({'article_count': article_count,  # 文章的数量，根据数量可以进行判断需不需要更新
-                                                     'article_id': article_id})  # 当前这篇文章的ID
+                                                 'article_id': article_id})  # 当前这篇文章的ID
             self.record_list.append(record)
 
     def get_article_html(self, browser: Browser):
