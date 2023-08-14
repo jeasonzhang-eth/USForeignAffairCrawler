@@ -15,7 +15,7 @@ from selenium.webdriver.common.by import By
 from classes.browser import Browser
 from utils.element_operation import get_element_text_or_tail_or_attr
 from lxml.html import fromstring
-from lxml import etree
+# from lxml import etree
 
 
 def get_article_links():

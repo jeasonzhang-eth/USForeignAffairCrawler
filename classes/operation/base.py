@@ -14,15 +14,18 @@ import abc
 import pandas as pd
 from pandas import DataFrame
 from classes.browser import Browser
-from classes.result import Result
+from datetime import date
 from classes.record import Record
+import pickle
+
+Result = dict[date, Record]
 
 
 class Operation:
     __metaclass__ = abc.ABCMeta
     __browser = Browser()
     __output_df: DataFrame | None = None
-    __result: Result | None = None
+    __result: Result = {}
     __record_list: list[Record] = []
 
     @property
@@ -65,9 +68,6 @@ class Operation:
         # self.article_content_list: list[str] = []
         # self.president_spec_content_list: list[dict] = []
 
-    def to_df(self, result: Result):
-        pass
-
     def __del__(self):
         if self.__browser:
             self.__browser.quit()
@@ -88,11 +88,21 @@ class Operation:
     def extract_article_content(self):
         return
 
-    def save_result(self, result: Result):
-        # 使用pickle保存结果，结果是一个字典
+    def build_result(self):
+        for index, record in enumerate(self.record_list):
+            self.result[record.date_] = record
 
-        # 把结果保存为dataframe
-        self.to_df(result)
+    # 把result转换为DataFrame
+    def to_df(self):
+        self.output_df = Record.new(self.record_list)
+
+    def save_result(self):
+        # 将result保存为pickle文件
+        with open(f'./{self.president}.pkl', 'wb') as f:
+            pickle.dump(self.result, f)
+
+        # 把result转换为DataFrame
+        self.to_df()
         # 把dataframe及其元数据保存为HDF5文件
         with pd.HDFStore(f'./{self.president}.h5') as store:
             if self.output_df:
@@ -100,13 +110,12 @@ class Operation:
                 store.get_storer('data').attrs.metadata = self.output_df.attrs
                 # self.output_df.to_pickle(f'./{self.president}.pkl.bz2')
 
-    def read_result(self, filename):
+    def read_result(self):
         # 从pickle中将结果还原为result
-
+        with open(f'./{self.president}.pkl', 'rb') as f:
+            self.result = pickle.load(f)
         # 从HDF5文件中读取dataframe及其元数据
-        with pd.HDFStore(filename) as store:
+        with pd.HDFStore(f'./{self.president}.h5') as store:
             metadata = store.get_storer('data').attrs.metadata
-            df = store.get('data')
-            self.output_df = df
+            self.output_df = store.get('data')
             return metadata
-

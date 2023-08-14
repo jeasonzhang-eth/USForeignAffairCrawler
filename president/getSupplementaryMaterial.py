@@ -4,7 +4,7 @@
 @Contact :   zhangjie2@cuhk.edu.cn
 @License :   (C)Copyright 2018-2021
 
-@Modify Time      @Author    @Version    @Desciption
+@Modify Time      @Author    @Version    @Description
 ------------      -------    --------    -----------
 2022/11/24 0:05   JeasonZhang      1.0         None
 """
@@ -13,36 +13,11 @@ import pandas as pd
 from classes.browser import Browser
 from selenium.webdriver.common.by import By
 from selenium.common.exceptions import TimeoutException
-from utils.element_operation import html2element
-from lxml import etree
-from utils.element_operation import get_element_text_or_tail_or_attr
-from utils.element_operation import CONTENT_EXTRACTOR_USELESS_TAGS, CONTENT_EXTRACTOR_STRIP_TAGS
+from utils.element_operation import html2element, process_element
 
 import io
 import sys
 sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding='utf8')
-
-
-def process_element(element_):
-    # 将该标签内所有内容全部移除，包括子标签
-    etree.strip_elements(element_, *CONTENT_EXTRACTOR_USELESS_TAGS)
-    # 只移除该标签，但是保留该标签下面的子标签
-    etree.strip_tags(element_, *CONTENT_EXTRACTOR_STRIP_TAGS)
-
-    a_tag_list = element_.xpath('//a')
-    for a_tag in a_tag_list:
-        a_text = get_element_text_or_tail_or_attr(a_tag, 'text')
-        link = get_element_text_or_tail_or_attr(a_tag, 'href')
-        final_text = a_text + '<' + link + '>'
-        a_tag.text = final_text
-    text_list = element_.xpath('//text()')
-
-    content_ = ';;;;'.join(text_list)
-    content_ = content_.replace('\n', ';;;;').replace('\t', '').replace(u'\xa0', u' ')
-
-    # content_ = content_.encode('utf8').decode('utf8')
-    print(content_)
-    return content_
 
 
 def preprocess_link(entity_, president_):

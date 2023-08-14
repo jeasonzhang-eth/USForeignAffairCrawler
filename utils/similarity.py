@@ -42,6 +42,6 @@ def similarity(s1, s2):
 
 
 if __name__ == '__main__':
-    s1 = 'hello'
-    s2 = 'world'
-    print(similarity(s1, s2))
+    s11 = 'hello'
+    s21 = 'world'
+    print(similarity(s11, s21))

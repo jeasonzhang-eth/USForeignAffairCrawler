@@ -15,6 +15,7 @@ from types import ModuleType
 from collections import defaultdict
 from lxml.html import fromstring, HtmlElement
 
+from utils.logger import Logger
 from utils.similarity import similarity
 
 # from src.similarity import similarity
@@ -142,11 +143,11 @@ def a_descendants(element: ArticleElement):
     """
     if element is None:
         return []
-    descendants = []
+    descendants_ = []
     for descendant in element.xpath('.//a'):
         descendant.__class__ = ArticleElement
-        descendants.append(descendant)
-    return descendants
+        descendants_.append(descendant)
+    return descendants_
 
 
 def a_descendants_group(element: ArticleElement):
@@ -170,10 +171,10 @@ def parent(element: ArticleElement):
     """
     if element is None:
         return None
-    parent = element.getparent()
-    if isinstance(parent, ModuleType):
-        parent.__class__ = ArticleElement
-    return parent
+    parent_: ArticleElement = element.getparent()
+    if isinstance(parent_, ModuleType):
+        parent_.__class__ = ArticleElement
+    return parent_
 
 
 def children(element: ArticleElement, including=False):
@@ -294,9 +295,9 @@ def text(element: ArticleElement):
     """
     if element is None:
         return 0
-    text = ''.join(element.xpath('.//text()'))
-    text = re.sub(r'\s*', '', text, flags=re.S)
-    return text
+    text_ = ''.join(element.xpath('.//text()'))
+    text_ = re.sub(r'\s*', '', text_, flags=re.S)
+    return text_
 
 
 def number_of_char(element: ArticleElement):
@@ -318,9 +319,9 @@ def number_of_a_char(element: ArticleElement):
     """
     if element is None:
         return 0
-    text = ''.join(element.xpath('.//a//text()'))
-    text = re.sub(r'\s*', '', text, flags=re.S)
-    return len(text)
+    text_ = ''.join(element.xpath('.//a//text()'))
+    text_ = re.sub(r'\s*', '', text_, flags=re.S)
+    return len(text_)
 
 
 def number_of_a_char_log10(element: ArticleElement):
@@ -386,10 +387,10 @@ def number_of_punctuation(element: ArticleElement):
     """
     if element is None:
         return 0
-    text = ''.join(element.xpath('.//text()'))
-    text = re.sub(r'\s*', '', text, flags=re.S)
+    text_ = ''.join(element.xpath('.//text()'))
+    text_ = re.sub(r'\s*', '', text_, flags=re.S)
     PUNCTUATION = set('''！，。？、；：“”‘’《》%（）<>{}「」【】*～`,.?:;'"!%()''')
-    punctuations = [c for c in text if c in PUNCTUATION]
+    punctuations = [c for c in text_ if c in PUNCTUATION]
     return len(punctuations)
 
 
@@ -416,38 +417,44 @@ def number_of_siblings(element: ArticleElement):
     return len(list(siblings(element, including=False)))
 
 
-# def number_of_clusters(element: ArticleElement, tags=None):
-#     """
-#     get number of clusters
-#     :param element:
-#     :return:
-#     """
-#     from gerapy_auto_extractor.extractors.list import LIST_MIN_NUMBER, LIST_MAX_LENGTH, LIST_MIN_LENGTH, \
-#         SIMILARITY_THRESHOLD
-#     if element is None:
-#         return 0
-#     if tags and not isinstance(tags, (list, tuple)):
-#         logger.error('you must pass tags arg as list or tuple')
-#     descendants_tree = defaultdict(list)
-#     descendants = descendants_of_body(element)
-#     for descendant in descendants:
-#         # if one element does not have enough siblings, it can not become a child of candidate element
-#         if descendant.number_of_siblings + 1 < LIST_MIN_NUMBER:
-#             continue
-#         # if min length is larger than specified max length, it can not become a child of candidate element
-#         if descendant.a_descendants_group_text_min_length > LIST_MAX_LENGTH:
-#             continue
-#         # if max length is smaller than specified min length, it can not become a child of candidate element
-#         if descendant.a_descendants_group_text_max_length < LIST_MIN_LENGTH:
-#             continue
-#         # descendant element must have same siblings which their similarity should not below similarity_threshold
-#         if descendant.similarity_with_siblings < SIMILARITY_THRESHOLD:
-#             continue
-#         # filter tag
-#         if tags and descendant.tag not in tags:
-#             continue
-#         descendants_tree[descendant.parent_selector].append(descendant)
-#     return len(descendants_tree)
+def number_of_clusters(element: ArticleElement, tags=None):
+    """
+    get number of clusters
+    :param tags:
+    :type tags:
+    :param element:
+    :return:
+    """
+    LIST_MIN_NUMBER = 5
+    LIST_MIN_LENGTH = 8
+    LIST_MAX_LENGTH = 44
+    SIMILARITY_THRESHOLD = 0.8
+
+    if element is None:
+        return 0
+    if tags and not isinstance(tags, (list, tuple)):
+        logger = Logger().get_logger
+        logger.error('you must pass tags arg as list or tuple')
+    descendants_tree = defaultdict(list)
+    descendants_ = descendants_of_body(element)
+    for descendant in descendants_:
+        # if one element does not have enough siblings, it can not become a child of candidate element
+        if descendant.number_of_siblings + 1 < LIST_MIN_NUMBER:
+            continue
+        # if min length is larger than specified max length, it can not become a child of candidate element
+        if descendant.a_descendants_group_text_min_length > LIST_MAX_LENGTH:
+            continue
+        # if max length is smaller than specified min length, it can not become a child of candidate element
+        if descendant.a_descendants_group_text_max_length < LIST_MIN_LENGTH:
+            continue
+        # descendant element must have same siblings which their similarity should not below similarity_threshold
+        if descendant.similarity_with_siblings < SIMILARITY_THRESHOLD:
+            continue
+        # filter tag
+        if tags and descendant.tag not in tags:
+            continue
+        descendants_tree[descendant.parent_selector].append(descendant)
+    return len(descendants_tree)
 
 
 def number_of_children(element: ArticleElement):
@@ -601,3 +608,25 @@ def process4content_extractor(tag_set, date_set, element: ArticleElement, date_)
         if pp_tag_list:
             if (p_tag.text in [' ', '']) and (p_tag.tail in [' ', '']):
                 remove_element(p_tag)
+
+
+def process_element(element_):
+    # 将该标签内所有内容全部移除，包括子标签
+    etree.strip_elements(element_, *CONTENT_EXTRACTOR_USELESS_TAGS)
+    # 只移除该标签，但是保留该标签下面的子标签
+    etree.strip_tags(element_, *CONTENT_EXTRACTOR_STRIP_TAGS)
+
+    a_tag_list = element_.xpath('//a')
+    for a_tag in a_tag_list:
+        a_text = get_element_text_or_tail_or_attr(a_tag, 'text')
+        link = get_element_text_or_tail_or_attr(a_tag, 'href')
+        final_text = a_text + '<' + link + '>'
+        a_tag.text = final_text
+    text_list = element_.xpath('//text()')
+
+    content_ = ';;;;'.join(text_list)
+    content_ = content_.replace('\n', ';;;;').replace('\t', '').replace(u'\xa0', u' ')
+
+    # content_ = content_.encode('utf8').decode('utf8')
+    print(content_)
+    return content_

@@ -22,11 +22,11 @@ from typing import Annotated as Ann
 
 @dataclass
 class Record(AsFrame):
-    index: Ann[Index[int], 'index'] = 0
+    # index: Ann[Index[int], 'index'] = 0
     date_: Ann[Data[str], 'date'] = ''
     president: Data[str] = ''
     article_link: Data[str] = ''
-    article_short_link: Data[str] = ''
+    # article_short_link: Data[str] = ''
     article_html: Data[str] = ''
     article_content: Data[str] = ''
     president_spec_content: Data[str] = ''

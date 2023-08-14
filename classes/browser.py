@@ -64,7 +64,7 @@ class Browser(object):
         return self
 
     # type、value和traceback将分别表示异常的类型、异常对象和异常堆栈信息，传递出上下文显示,如果没有异常，则三个变量的值均为 None。
-    def __exit__(self, exc_type, exc_value,exc_traceback):
+    def __exit__(self, exc_type, exc_value, exc_traceback):
         if self.driver:
             self.driver.quit()
 

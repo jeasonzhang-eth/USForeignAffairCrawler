@@ -13,11 +13,12 @@ from classes.browser import Browser
 from classes.operation.base import Operation
 from classes.record import Record
 from utils.tools import format_date
+from ast import literal_eval
 
 
 class OperationBiden(Operation):
     def compare_to_last_execute(self):
-        pass
+        self.read_result()
 
     def get_article_urls(self, browser: Browser):
         base_url = 'https://www.state.gov/public-schedule/'
@@ -27,19 +28,23 @@ class OperationBiden(Operation):
 
         article_id_text = browser.find_element((By.CSS_SELECTOR, "#post-22944")).get_attribute("data-returned-posts")
         article_id_list = article_id_text.replace('[', '').replace(']', '').split(',')
-
+        article_id_list = [469822, 469589, 469055]
         for index, article_id in enumerate(article_id_list):
             record = Record()
-            record.index = index
-            record.article_short_link = f'https://www.state.gov/?p={article_id}'  # 这里是文章的短链接，可能失效
+            record.president = 'biden'
+            # record.index = index
+            article_short_link = f'https://www.state.gov/?p={article_id}'  # 这里是文章的短链接，可能失效
             record.president_spec_content = str({'article_count': article_count,  # 文章的数量，根据数量可以进行判断需不需要更新
+                                                 'article_short_link': article_short_link,  # 拜登的有短连接
                                                  'article_id': article_id})  # 当前这篇文章的ID
             self.record_list.append(record)
 
     def get_article_html(self, browser: Browser):
         for index, record in enumerate(self.record_list):
+            president_spec_content = literal_eval(record.president_spec_content)
+            article_short_link = president_spec_content['article_short_link']
             # 获取真实的文章链接
-            browser.open(record.article_link)
+            browser.open(article_short_link)
             record.article_link = browser.get_current_url()
 
             # 获取日期
@@ -55,13 +60,15 @@ class OperationBiden(Operation):
             self.record_list[index] = record
 
     def extract_article_content(self):
-        for index, article_html in enumerate(self.record_list):
-            pass
+        for index, record in enumerate(self.record_list):
+            record.article_content = ''
 
     def run(self, browser: Browser):
+        self.compare_to_last_execute()
         self.get_article_urls(browser)
         self.get_article_html(browser)
         self.extract_article_content()
+        self.save_result()
 
     def __init__(self):
         super().__init__('biden')
