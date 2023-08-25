@@ -15,7 +15,7 @@ from types import ModuleType
 from collections import defaultdict
 from lxml.html import fromstring, HtmlElement
 
-from utils.logger import Logger
+from utils.mylogger import MyLogger
 from utils.similarity import similarity
 
 # from src.similarity import similarity
@@ -433,7 +433,7 @@ def number_of_clusters(element: ArticleElement, tags=None):
     if element is None:
         return 0
     if tags and not isinstance(tags, (list, tuple)):
-        logger = Logger().get_logger
+        logger = MyLogger().get_logger
         logger.error('you must pass tags arg as list or tuple')
     descendants_tree = defaultdict(list)
     descendants_ = descendants_of_body(element)

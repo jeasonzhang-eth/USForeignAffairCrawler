@@ -30,6 +30,7 @@ class Record(AsFrame):
     article_html: Data[str] = ''
     article_content: Data[str] = ''
     president_spec_content: Data[str] = ''
+    success: bool = False
 
     # @property
     # def president_spec_content(self):

@@ -1,0 +1,34 @@
+2023-08-18 05:28:09.266 | ERROR    | classes.operation.base:read_result:165 - ./biden.pkl文件不存在
+2023-08-18 05:28:09.266 | INFO     | classes.operation.biden:compare_to_last_execute:35 - 打开上一次结果失败，此次运行是第一次运行
+2023-08-18 05:34:27.376 | ERROR    | classes.operation.biden:get_article_html:101 - 超时了，超时链接是https://www.state.gov/?p=429355		None	None
+2023-08-18 05:39:58.201 | ERROR    | classes.operation.biden:get_article_html:101 - 超时了，超时链接是https://www.state.gov/?p=394816		None	None
+2023-08-18 05:42:58.189 | ERROR    | classes.operation.biden:get_article_html:101 - 超时了，超时链接是https://www.state.gov/?p=374338		None	None
+2023-08-18 05:47:57.384 | ERROR    | classes.operation.biden:get_article_html:101 - 超时了，超时链接是https://www.state.gov/?p=344872		None	None
+2023-08-18 05:53:47.869 | ERROR    | classes.operation.biden:get_article_html:101 - 超时了，超时链接是https://www.state.gov/?p=303416		None	None
+2023-08-18 05:54:48.403 | ERROR    | classes.operation.biden:get_article_html:101 - 超时了，超时链接是https://www.state.gov/?p=303231		None	None
+2023-08-18 06:00:28.996 | ERROR    | classes.operation.biden:get_article_html:101 - 超时了，超时链接是https://www.state.gov/?p=269105		None	None
+2023-08-18 06:01:58.853 | ERROR    | classes.operation.biden:get_article_html:101 - 超时了，超时链接是https://www.state.gov/?p=261102		None	None
+2023-08-18 06:17:32.147 | INFO     | classes.operation.biden:compare_to_last_execute:35 - 打开上一次结果失败，此次运行是第一次运行
+2023-08-18 06:18:21.764 | INFO     | classes.operation.biden:compare_to_last_execute:35 - 打开上一次结果失败，此次运行是第一次运行
+2023-08-18 06:19:01.898 | INFO     | classes.operation.biden:compare_to_last_execute:33 - 打开上一次结果成功，此次运行不是第一次运行
+2023-08-18 06:23:20.818 | ERROR    | classes.operation.base:read_result:166 - ./biden.pkl文件不存在
+2023-08-18 06:23:20.819 | INFO     | classes.operation.biden:compare_to_last_execute:35 - 打开上一次结果失败，此次运行是第一次运行
+2023-08-18 06:25:24.271 | ERROR    | classes.operation.biden:get_article_html:101 - 超时了，超时链接是https://www.state.gov/?p=431460		None	None
+2023-08-18 06:26:12.025 | ERROR    | classes.operation.base:read_result:166 - ./biden.pkl文件不存在
+2023-08-18 06:26:12.025 | INFO     | classes.operation.biden:compare_to_last_execute:35 - 打开上一次结果失败，此次运行是第一次运行
+2023-08-18 06:29:37.692 | ERROR    | classes.operation.biden:get_article_html:101 - 超时了，超时链接是https://www.state.gov/?p=413657		None	None
+2023-08-18 06:30:38.582 | ERROR    | classes.operation.biden:get_article_html:101 - 超时了，超时链接是https://www.state.gov/?p=413167		None	None
+2023-08-18 06:31:39.242 | ERROR    | classes.operation.biden:get_article_html:101 - 超时了，超时链接是https://www.state.gov/?p=412889		None	None
+2023-08-18 06:36:39.069 | ERROR    | classes.operation.biden:get_article_html:101 - 超时了，超时链接是https://www.state.gov/?p=363763		None	None
+2023-08-18 06:37:39.613 | ERROR    | classes.operation.biden:get_article_html:101 - 超时了，超时链接是https://www.state.gov/?p=363558		None	None
+2023-08-18 06:42:38.757 | ERROR    | classes.operation.biden:get_article_html:101 - 超时了，超时链接是https://www.state.gov/?p=311120		None	None
+2023-08-18 06:43:39.296 | ERROR    | classes.operation.biden:get_article_html:101 - 超时了，超时链接是https://www.state.gov/?p=310825		None	None
+2023-08-18 06:48:48.763 | ERROR    | classes.operation.biden:get_article_html:101 - 超时了，超时链接是https://www.state.gov/?p=264183		None	None
+2023-08-18 06:49:49.288 | ERROR    | classes.operation.biden:get_article_html:101 - 超时了，超时链接是https://www.state.gov/?p=263610		None	None
+2023-08-18 06:54:48.383 | ERROR    | classes.operation.biden:get_article_html:101 - 超时了，超时链接是https://www.state.gov/?p=215331		None	None
+2023-08-18 06:55:49.004 | ERROR    | classes.operation.biden:get_article_html:101 - 超时了，超时链接是https://www.state.gov/?p=214887		None	None
+2023-08-18 12:40:42.739 | INFO     | classes.operation.biden:compare_to_last_execute:33 - 打开上一次结果成功，此次运行不是第一次运行
+2023-08-18 12:41:33.742 | INFO     | classes.operation.biden:compare_to_last_execute:33 - 打开上一次结果成功，此次运行不是第一次运行
+2023-08-18 14:05:16.663 | INFO     | classes.operation.biden:compare_to_last_execute:33 - 打开上一次结果成功，此次运行不是第一次运行
+2023-08-18 14:06:21.688 | INFO     | classes.operation.biden:compare_to_last_execute:33 - 打开上一次结果成功，此次运行不是第一次运行
+2023-08-18 14:06:21.690 | INFO     | classes.operation.biden:run:157 - 本次运行没有需要更新的文章
